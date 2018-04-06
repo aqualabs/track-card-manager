@@ -1,0 +1,196 @@
+/**
+  ========================================
+  ========== Aqua Track Manager ========== 
+  ========================================
+  = Creation of track cards. Reinvented. =
+  =         (c) AquaLabs V.O.F.          =
+  ========================================
+*/
+
+/* Default properties order:
+ * - Display property
+ * - Flex container properties
+ * - Flex item properties
+ * - Size properties
+ * - Color properties
+ * - Border properties
+ * - Other properties
+ */
+
+/**
+  ---------- Section ----------
+  -   Variables for element   -
+  -----------------------------
+ */
+
+body {
+  /* Colors for the track cards */
+  --grass-color: #c5df9b;
+  --interval-line-color: #cfe8f3;
+  --lane-number-color: black;
+  --lane-number-font-family: "Trebuchet MS", Helvetica, sans-serif;
+  --lane-number-font-size: 20px;
+  --water-color: #8dcae6;
+  --water-color-accent: #bedeee;
+  --wood-color: #7d5f2c;
+}
+
+/**
+  ---------- Section ----------
+  - Layout of the track card  -
+  -----------------------------
+ */
+
+/**
+  - Body element -
+  Main container for the track cards.
+ */
+body {
+  /* Display property */
+  display: flex;
+  /* Flex container properties */
+  align-items: center;
+  justify-content: space-around;
+  /* Color properties */
+  background: var(--grass-color);
+}
+
+/**
+  - Map element -
+  Container for the lane cards items.
+ */
+.map {
+  /* Display property */
+  display: flex;
+  /* Size properties */
+  width: 100%;
+  height: 400px;
+  /* Color properties */
+  background: var(--water-color);
+}
+
+/**
+  - Start and lanes container element -
+  Container for the starting area and the lanes.
+ */
+.start-container,
+.lanes-container {
+  /* Display property */
+  display: flex;
+  /* Flex container properties */
+  flex-direction: column;
+}
+.start-container > *:nth-child(odd),
+.lanes-container > *:nth-child(odd) {
+  /* Color properties */
+  background: var(--water-color-accent);
+}
+.start-container {
+  width: 25px;
+}
+.lanes-container {
+  /* Flex item properties */
+  flex: 1;
+}
+/**
+  - Side lane element -
+  Padding for first and last lane.
+ */
+.side-lane {
+  /* Flex container properties */
+  display: flex;
+  /* Flex item properties */
+  flex: 1;
+}
+.side-lane:last-child {
+  /* Border properties */
+  border-top: 2px #fafd3e dashed;
+}
+
+/**
+  - Lane element -
+  Padding for first and last lane.
+ */
+.lane {
+  /* Flex container properties */
+  display: flex;
+  /* Flex item properties */
+  flex: 3;
+  /* Border properties */
+  border-top: 2px #fafd3e dashed;
+}
+.start-container > .lane {
+  align-items: center;
+}
+
+/**
+  - Interval element -
+  Blocks of intervals in the track
+ */
+.interval {
+  /* Flex container properties */
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  /* Size properties */
+  height: auto;
+  /* Border properties */
+  border-right: 2px var(--interval-line-color) solid;
+}
+
+/**
+ - Start gate element -
+ Start gate in the starting area
+ */
+.start-gate {
+  /* Size properties */
+  height: 10px;
+  width: 75%;
+  /* Color properties */
+  background-color: var(--wood-color);
+}
+
+/**
+ - Lane number element -
+ Number of the lane, to be displayed at start and finish
+ */
+.lane-number {
+  /* Flex item properties */
+  justify-self: flex-start;
+  /* Color properties */
+  color: var(--lane-number-color);
+  /* Other properties */
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  font-family: var(--lane-number-font-family);
+  font-size: var(--lane-number-font-size);
+  text-align: center;
+}
+
+/**
+ - Interval status -
+ Status of the interval block in lane
+ */
+.interval-status {
+  /* Size properties */
+  height: 10px;
+  width: 10px;
+  /* Color properties */
+  background: red;
+}
+.interval-status[status="CLOSED"] {
+  /* Color properties */
+  background: red;
+}
+.interval-status[status="OPEN"] {
+  /* Color properties */
+  background: green;
+}
+.interval-status[status="RACINGTRACK"] {
+  /* Color properties */
+  background: purple;
+}
+
+
+
+      
