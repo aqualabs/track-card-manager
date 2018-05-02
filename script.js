@@ -1,6 +1,6 @@
 /*
  * ========================================
- * ========== Aqua Track Manager ========== 
+ * ========== Aqua Track Manager ==========
  * ========================================
  * = Creation of track cards. Reinvented. =
  * =         (c) AquaLabs V.O.F.          =
@@ -10,6 +10,7 @@
 /*
  * Set variables
  */
+'use strict';
 const lanes = [0,1,2,3,4,5,6,7];
 const intervals = [0, 250, 500, 1000, 1250, 1500, 2000];
 const pontoons = [{
@@ -98,7 +99,7 @@ function initializeLabels() {
       } else {
         intervalLabelNode.innerHTML = lastInterval + 'm';
       }
-      intervalNode.appendChild(intervalLabelNode);      
+      intervalNode.appendChild(intervalLabelNode);
       lastInterval = interval;
       labelsContainerNode.appendChild(intervalNode);
     }
@@ -194,10 +195,10 @@ function initializeSideLanes() {
   createIntervalsOnNode(firstLaneSideLaneNode);
   createIntervalsOnNode(secondLaneSideLaneNode);
   // Insert the side lanes in the DOM
-  startContainer.prepend(firstStartSideLaneNode);  
+  startContainer.prepend(firstStartSideLaneNode);
   lanesContainer.prepend(firstLaneSideLaneNode);
   pontoonsContainer.prepend(firstPontoonSideLaneNode);
-  startContainer.append(secondStartSideLaneNode);  
+  startContainer.append(secondStartSideLaneNode);
   lanesContainer.append(secondLaneSideLaneNode);
   pontoonsContainer.append(secondPontoonSideLaneNode);
 }
@@ -282,7 +283,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   let intervalSectionRight = document.createElement('div');
   intervalSectionRight.classList.add('interval-section-right');
   intervalSectionRight.addEventListener('click', onIntervalSectionClicked);
-  intervalSectionRight.setAttribute('status', 'NONE');  
+  intervalSectionRight.setAttribute('status', 'NONE');
   let intervalSectionRightSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   intervalSectionRightSVG.setAttribute('width', '44px');
   intervalSectionRightSVG.setAttribute('height', '100%');
@@ -311,7 +312,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   arrowLeftUp.setAttribute('stroke', '#fff')
   arrowLeftUp.setAttribute('stroke-width', '5px');
   arrowLeftUp.setAttribute('fill', '#fff');
-  arrowLeftUp.classList.add('arrow-up');    
+  arrowLeftUp.classList.add('arrow-up');
   intervalSectionLeftSVG.appendChild(arrowLeftUp);
   let arrowLineLeftUp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   arrowLineLeftUp.setAttribute('d', 'M100,50 Q25,50,25,20')
@@ -326,7 +327,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   arrowLeftDown.setAttribute('stroke', '#fff')
   arrowLeftDown.setAttribute('stroke-width', '5px');
   arrowLeftDown.setAttribute('fill', '#fff');
-  arrowLeftDown.classList.add('arrow-down');  
+  arrowLeftDown.classList.add('arrow-down');
   intervalSectionLeftSVG.appendChild(arrowLeftDown);
   let arrowLineLeftDown = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   arrowLineLeftDown.setAttribute('d', 'M100,50 Q25,50,25,80')
@@ -341,7 +342,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   leftVerticalBaseLine.setAttribute('stroke', '#fff')
   leftVerticalBaseLine.setAttribute('stroke-width', '5px');
   leftVerticalBaseLine.setAttribute('fill', '#fff');
-  leftVerticalBaseLine.classList.add('vertical-base-line');  
+  leftVerticalBaseLine.classList.add('vertical-base-line');
   intervalSectionLeftSVG.appendChild(leftVerticalBaseLine);
   // Step 2.2) Drawing section center
   // Create a DOM node for the base line
@@ -349,7 +350,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   baseLine.setAttribute('d', 'M0,50 L100,50')
   baseLine.setAttribute('stroke', '#fff')
   baseLine.setAttribute('stroke-width', '5px');
-  baseLine.setAttribute('fill', '#fff'); 
+  baseLine.setAttribute('fill', '#fff');
   baseLine.classList.add('arrow-line');
   intervalSectionCenterSVG.appendChild(baseLine);
   // Step 2.3) Drawings section right
@@ -374,7 +375,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   arrowRightUp.setAttribute('stroke', '#fff')
   arrowRightUp.setAttribute('stroke-width', '5px');
   arrowRightUp.setAttribute('fill', '#fff');
-  arrowRightUp.classList.add('arrow-up');    
+  arrowRightUp.classList.add('arrow-up');
   intervalSectionRightSVG.appendChild(arrowRightUp);
   let arrowLineRightUp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   arrowLineRightUp.setAttribute('d', 'M0,50 Q75,50,75,20')
@@ -389,7 +390,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   arrowRightDown.setAttribute('stroke', '#fff')
   arrowRightDown.setAttribute('stroke-width', '5px');
   arrowRightDown.setAttribute('fill', '#fff');
-  arrowRightDown.classList.add('arrow-down');  
+  arrowRightDown.classList.add('arrow-down');
   intervalSectionRightSVG.appendChild(arrowRightDown);
   let arrowLineRightDown = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   arrowLineRightDown.setAttribute('d', 'M0,50 Q75,50,75,80')
@@ -404,7 +405,7 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   rightVerticalBaseLine.setAttribute('stroke', '#fff')
   rightVerticalBaseLine.setAttribute('stroke-width', '5px');
   rightVerticalBaseLine.setAttribute('fill', '#fff');
-  rightVerticalBaseLine.classList.add('vertical-base-line'); 
+  rightVerticalBaseLine.classList.add('vertical-base-line');
   intervalSectionRightSVG.appendChild(rightVerticalBaseLine);
   // Step 3) Save the elements in the DOM tree
   // Step 3.1) Save section SVG's
@@ -434,7 +435,7 @@ function createLane(laneNumber) {
   // Create start gate in start lane
   createStartGate(startingLaneNode);
   // Insert the lane in the DOM
-  startContainer.appendChild(startingLaneNode);  
+  startContainer.appendChild(startingLaneNode);
   lanesContainer.appendChild(laneNode);
 }
 
@@ -528,4 +529,108 @@ function laneTypeSelector(event) {
       element.setAttribute('lane-type', 'FORBIDDEN');
     });
   }
+}
+
+
+/**
+ * Returns a JSON-document containing all lane settings.
+ * @returns {Object} - An object containing all lane settings.
+ */
+function getTrackInfo() {
+  // Preformat the document.
+  let doc = {
+    availableLanes: [],
+    availableIntervals: [],
+    availablePontoons: [],
+    lanes: {},
+    pontoons: {}
+  };
+
+  let intervalContainer = document.querySelector('.labels-container');
+
+  // Get all intervals.
+  intervalContainer.querySelectorAll('.interval').forEach((element) => {
+    let interval = element.getAttribute('interval');
+
+    if (!doc.availableIntervals.includes(interval)) {
+      doc.availableIntervals.push(interval);
+    }
+  });
+
+  let lanesContainer = document.querySelector('.lanes-container');
+
+  // Get all lanes.
+  lanesContainer.querySelectorAll('.lane').forEach((lane) => {
+    let laneNumber = lane.getAttribute('lane-number');
+    let laneType = lane.getAttribute('lane-type');
+
+    // Add the lane number to the doc.
+    doc.availableLanes.push(laneNumber);
+    doc.lanes[laneNumber] = {}
+    let laneDoc = doc.lanes[laneNumber];
+
+    // Add the lane properties.
+    laneDoc.laneType = laneType;
+    laneDoc.intervals = {};
+
+    // Add the interval information.
+    doc.availableIntervals.forEach((availableInterval) => {
+      laneDoc.intervals[availableInterval] = {};
+      let laneIntervalDoc = laneDoc.intervals[availableInterval];
+
+      let laneInterval = lane.querySelector(`[interval='${availableInterval}']`);
+
+      // Add the sections for that laneInterval.
+      if (laneInterval) {
+        let left = laneInterval.querySelector('.interval-section-left');
+        if (left) laneIntervalDoc.left = left.getAttribute('status');
+        let center = laneInterval.querySelector('.interval-section-center');
+        if (center) laneIntervalDoc.center = center.getAttribute('status');
+        let right = laneInterval.querySelector('.interval-section-right');
+        if (right) laneIntervalDoc.right = right.getAttribute('status');
+      }
+    });
+  });
+
+  let pontoonsContainer = document.querySelector('.pontoons-container');
+
+  // Get all lanes.
+  pontoonsContainer.querySelectorAll('.pontoon').forEach((pontoon) => {
+    let pontoonNumber = pontoon.getAttribute('pontoon-number');
+
+    // Add the lane number to the doc.
+    doc.availablePontoons.push(pontoonNumber);
+    doc.pontoons[pontoonNumber] = {}
+    let pontoonDoc = doc.pontoons[pontoonNumber];
+
+    pontoonDoc.status = pontoon.getAttribute('status');
+  });
+
+  return doc;
+}
+
+/**
+ * Save the current track to the server.
+ * @param {String} name - The name of the current track.
+ */
+function saveCurrentTrack(name = 'Baankaart') {
+  return fetch('https://dev-server1.aqualabs.nl/api/tracks', {
+    body: JSON.stringify({
+      description: name,
+      content: getTrackInfo()
+    }),
+    headers: {
+      'content-type': 'application/json'
+    },
+    method: 'POST',
+    mode: 'cors'
+  });
+}
+
+/**
+ * Save the current track to the server.
+ * @param {String} name - The name of the current track.
+ */
+function getTrackById(id) {
+  return fetch(`https://dev-server1.aqualabs.nl/api/tracks/${id}`);
 }
