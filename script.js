@@ -32,19 +32,48 @@ const pontoons = [{
 /*
  * Get necessery variables
  */
-const startContainer = document.querySelector('.start-container');
-const lanesContainer = document.querySelector('.lanes-container');
-const pontoonsContainer = document.querySelector('.pontoons-container');
+let startContainer;
+let lanesContainer;
+let pontoonsContainer;
 
 /**
  * Initialization script
  */
 (function() {
+  initializeBase();
   initializeLanes();
   initializePontoons();
   initializeLabels();
   initializeSideLanes();
 })();
+
+/**
+ * Initialize the base DOM nodes
+ */
+function initializeBase() {
+  // Create map element
+  let mapNode = document.createElement('div');
+  mapNode.classList.add('map');
+  let startContainerNode = document.createElement('div');
+  startContainerNode.classList.add('start-container');
+  mapNode.append(startContainerNode);
+  startContainer = startContainerNode;
+  let lanesContainerNode = document.createElement('div');
+  lanesContainerNode.classList.add('lanes-container');
+  mapNode.append(lanesContainerNode);
+  lanesContainer = lanesContainerNode;
+  let pontoonsContainerNode = document.createElement('div');
+  pontoonsContainerNode.classList.add('pontoons-container');
+  mapNode.append(pontoonsContainerNode);
+  pontoonsContainer = pontoonsContainerNode;
+
+  document.querySelector('body').prepend(mapNode);
+  // Create labels container node
+  let labelsContainerNode = document.createElement('div');
+  labelsContainerNode.classList.add('labels-container');
+  document.querySelector('body').prepend(labelsContainerNode);
+  
+}
 
 /**
  * Initialize the labels in the DOM
