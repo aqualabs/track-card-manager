@@ -326,6 +326,23 @@ div[class^="interval-section-"][status="HORIZONTALDOWN"] svg path.vertical-base-
 }
 
 /**
+ - Pontoons status -
+ Status of the pontoons
+ */
+.pontoon svg path {
+  display: none;
+}
+.pontoon[status="OUTBOUND"] svg path.outbound {
+  display: inline;
+}
+.pontoon[status="INBOUND"] svg path.inbound {
+  display: inline;
+}
+.pontoon[status="CLOSED"] svg path.closed {
+  display: inline;
+}
+
+/**
  - Pontoons container -
  Container for pontoons and side lanes
  */

@@ -12,19 +12,38 @@
  */
 const lanes = [0,1,2,3,4,5,6,7];
 const intervals = [0, 250, 500, 1000, 1250, 1500, 2000];
+const pontoons = [{
+    'number': 0,
+    'status': 'CLOSED'
+  }, {
+    'number': 1,
+    'status': 'OUTBOUND'
+  }, {
+    'number': 2,
+    'status': 'CLOSED'
+  }, {
+    'number': 3,
+    'status': 'INBOUND'
+  }, {
+    'number': 4,
+    'status': 'INBOUND'
+  }]
 
 /*
  * Get necessery variables
  */
 const startContainer = document.querySelector('.start-container');
 const lanesContainer = document.querySelector('.lanes-container');
+const pontoonsContainer = document.querySelector('.pontoons-container');
 
 /**
  * Initialization script
  */
 (function() {
   initializeLanes();
+  initializePontoons();
   initializeLabels();
+  initializeSideLanes();
 })();
 
 /**
@@ -63,8 +82,95 @@ function initializeLabels() {
 function initializeLanes() {
   // Loop through the lanes to be initialized
   lanes.forEach(createLane);
-  // Create side lanes
-  createSideLanes();
+}
+/**
+ * Initialize the pontoons in the DOM
+ */
+function initializePontoons() {
+  // Create pontoons holder node
+  let pontoonsNode = document.createElement('div');
+  pontoonsNode.classList.add('pontoons');
+  // Create pontoons
+  pontoons.forEach((pontoon) => {
+    // Create pontoon node
+    let pontoonNode = document.createElement('div');
+    pontoonNode.classList.add('pontoon');
+    pontoonNode.setAttribute('pontoon-number', pontoon.number);
+    pontoonNode.setAttribute('status', pontoon.status);
+    pontoonNode.onclick = onPontoonClicked;
+    // Create svg container
+    let pontoonSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    pontoonSVG.setAttribute('height', '100%');
+    pontoonSVG.setAttribute('viewBox', '0 0 100 100');
+    // Initialize outbound items
+    let outBoundArrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    outBoundArrow.setAttribute('d', 'M20,50 L50,80 L50,20 z')
+    outBoundArrow.setAttribute('stroke', '#fff')
+    outBoundArrow.setAttribute('fill', '#fff')
+    outBoundArrow.classList.add('outbound');
+    pontoonSVG.append(outBoundArrow);
+    let outBoundArrowLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    outBoundArrowLine.setAttribute('d', 'M50,50 L90,50')
+    outBoundArrowLine.setAttribute('stroke', '#fff')
+    outBoundArrowLine.setAttribute('stroke-width', '10px')
+    outBoundArrowLine.classList.add('outbound');
+    pontoonSVG.append(outBoundArrowLine);
+    // Initialize inbound items
+    let inBoundArrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    inBoundArrow.setAttribute('d', 'M80,50 L50,80 L50,20 z')
+    inBoundArrow.setAttribute('stroke', '#fff')
+    inBoundArrow.setAttribute('fill', '#fff')
+    inBoundArrow.classList.add('inbound');
+    pontoonSVG.append(inBoundArrow);
+    let inBoundArrowLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    inBoundArrowLine.setAttribute('d', 'M10,50 L50,50')
+    inBoundArrowLine.setAttribute('stroke', '#fff')
+    inBoundArrowLine.setAttribute('stroke-width', '10px')
+    inBoundArrowLine.classList.add('inbound');
+    pontoonSVG.append(inBoundArrowLine);
+    // Initialize closed items
+    let closed = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    closed.setAttribute('d', 'M20,20 L80,80 M20,80 L80,20')
+    closed.setAttribute('stroke', '#fff')
+    closed.setAttribute('stroke-width', '10px')
+    closed.classList.add('closed');
+    pontoonSVG.append(closed);
+    // Add the pontoon to the pontoon holder node
+    pontoonNode.append(pontoonSVG);
+    pontoonsNode.append(pontoonNode);
+  });
+  // Insert the pontoons in the DOM
+  pontoonsContainer.prepend(pontoonsNode);
+}
+/**
+ * Initialize the side lines in the track
+ */
+function initializeSideLanes() {
+  // Create the first side lane nodes
+  let firstStartSideLaneNode = document.createElement('div');
+  let firstLaneSideLaneNode = document.createElement('div');
+  let firstPontoonSideLaneNode = document.createElement('div');
+  // Create the second side lane nodes
+  let secondStartSideLaneNode = document.createElement('div');
+  let secondLaneSideLaneNode = document.createElement('div');
+  let secondPontoonSideLaneNode = document.createElement('div');
+  // Set the side lane properties
+  [
+    firstStartSideLaneNode, firstLaneSideLaneNode, firstPontoonSideLaneNode,
+    secondStartSideLaneNode, secondLaneSideLaneNode, secondPontoonSideLaneNode,
+  ].forEach((element) => {
+    element.classList.add('side-lane');
+  });
+  // Set interval nodes in the side lane inside the lanes container
+  createIntervalsOnNode(firstLaneSideLaneNode);
+  createIntervalsOnNode(secondLaneSideLaneNode);
+  // Insert the side lanes in the DOM
+  startContainer.prepend(firstStartSideLaneNode);  
+  lanesContainer.prepend(firstLaneSideLaneNode);
+  pontoonsContainer.prepend(firstPontoonSideLaneNode);
+  startContainer.append(secondStartSideLaneNode);  
+  lanesContainer.append(secondLaneSideLaneNode);
+  pontoonsContainer.append(secondPontoonSideLaneNode);
 }
 
 /**
@@ -303,27 +409,6 @@ function createLane(laneNumber) {
   lanesContainer.appendChild(laneNode);
 }
 
-/**
- * Create the side lines in the track
- */
-function createSideLanes() {
-  // Create a DOM node for the side lane
-  let firstSideLaneNode = document.createElement('div');
-  // Set the side lane properties
-  firstSideLaneNode.classList.add('side-lane');
-  // Set interval nodes in the side lane
-  createIntervalsOnNode(firstSideLaneNode);
-  // Duplicate DOM nodes
-  let secondSideLaneNode = firstSideLaneNode.cloneNode(true);
-  let startingFirstSideLaneNode = firstSideLaneNode.cloneNode();
-  let startingSecondSideLaneNode = secondSideLaneNode.cloneNode();
-  // Insert the side lanes in the DOM
-  startContainer.prepend(startingFirstSideLaneNode);  
-  lanesContainer.prepend(firstSideLaneNode);
-  startContainer.append(startingSecondSideLaneNode);  
-  lanesContainer.append(secondSideLaneNode);
-}
-
 function createStartGate(startingLaneNode) {
   // Create a DOM node for the starting lane
   let startGateNode = document.createElement('div');
@@ -383,7 +468,18 @@ function onIntervalSectionClicked(event) {
       intervalSection.setAttribute('status', 'NONE')
     }
   }
-  console.log(intervalSection);
+}
+
+function onPontoonClicked(event) {
+  let pontoon = event.currentTarget;
+  let pontoonStatus = pontoon.getAttribute('status') || 'CLOSED';
+  if (pontoonStatus === 'CLOSED') {
+    pontoon.setAttribute('status', 'OUTBOUND');
+  } else if (pontoonStatus === 'OUTBOUND') {
+    pontoon.setAttribute('status', 'INBOUND');
+  } else if (pontoonStatus === 'INBOUND') {
+    pontoon.setAttribute('status', 'CLOSED');
+  }
 }
 
 function laneTypeSelector(event) {
