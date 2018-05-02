@@ -1,3 +1,4 @@
+'use strict';
 /*
  * ========================================
  * ========== Aqua Track Manager ==========
@@ -10,29 +11,9 @@
 /*
  * Set variables
  */
-'use strict';
-const lanes = [0,1,2,3,4,5,6,7];
-const intervals = [0, 250, 500, 1000, 1250, 1500, 2000];
-const pontoons = [{
-    'number': 0,
-    'status': 'CLOSED'
-  }, {
-    'number': 1,
-    'status': 'OUTBOUND'
-  }, {
-    'number': 2,
-    'status': 'CLOSED'
-  }, {
-    'number': 3,
-    'status': 'INBOUND'
-  }, {
-    'number': 4,
-    'status': 'INBOUND'
-  }]
+let availableIntervals, availableLanes, availablePontoons;
+let lanes, pontoons;
 
-/*
- * Get necessery variables
- */
 let startContainer;
 let lanesContainer;
 let pontoonsContainer;
@@ -41,11 +22,24 @@ let pontoonsContainer;
  * Initialization script
  */
 (function() {
-  initializeBase();
-  initializeLanes();
-  initializePontoons();
-  initializeLabels();
-  initializeSideLanes();
+ getTrackById(2)
+  .then(function(response) {
+    return response.json();
+  }).then(function(fetchResult) {
+    // Set the variables
+    let result = fetchResult.content;
+    availableIntervals = result.availableIntervals;
+    availableLanes = result.availableLanes;
+    availablePontoons = result.availablePontoons;
+    lanes = result.lanes;
+    pontoons = result.pontoons;
+
+    initializeBase();
+    initializeLanes();
+    initializePontoons();
+    initializeLabels();
+    initializeSideLanes();
+  });
 })();
 
 /**
@@ -82,8 +76,9 @@ function initializeBase() {
 function initializeLabels() {
   let labelsContainerNode = document.querySelector('.labels-container');
   let lastInterval = 0;
-  intervals.push(intervals[intervals.length - 1]);
-  intervals.forEach((interval, index) => {
+  let intervalsVar = availableIntervals;
+  intervalsVar.push(availableIntervals[availableIntervals.length - 1]);
+  availableIntervals.forEach((interval, index) => {
     if (index != 0) {
       // Create a DOM node for the interval
       let intervalNode = document.createElement('div');
@@ -111,7 +106,7 @@ function initializeLabels() {
  */
 function initializeLanes() {
   // Loop through the lanes to be initialized
-  lanes.forEach(createLane);
+  availableLanes.forEach(createLane);
 }
 /**
  * Initialize the pontoons in the DOM
@@ -121,12 +116,12 @@ function initializePontoons() {
   let pontoonsNode = document.createElement('div');
   pontoonsNode.classList.add('pontoons');
   // Create pontoons
-  pontoons.forEach((pontoon) => {
+  availablePontoons.forEach((pontoon) => {
     // Create pontoon node
     let pontoonNode = document.createElement('div');
     pontoonNode.classList.add('pontoon');
     pontoonNode.setAttribute('pontoon-number', pontoon.number);
-    pontoonNode.setAttribute('status', pontoon.status);
+    pontoonNode.setAttribute('status', pontoons[pontoon].status);
     pontoonNode.onclick = onPontoonClicked;
     // Create svg container
     let pontoonSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -209,11 +204,14 @@ function initializeSideLanes() {
  */
 function createIntervalsOnNode(node) {
   // Loop over intervals
-  intervals.forEach((interval, index) => {
+  if (availableIntervals[0] != 0) {
+    availableIntervals.splice(0,0,0);
+  }
+  availableIntervals.forEach((interval, index) => {
     // First interval should be 0, and ommitted
     if (index != 0) {
       // Get last interval
-      let lastInterval = intervals[index - 1];
+      let lastInterval = availableIntervals[index - 1];
       // Create the interval on this node
       createIntervalOnNode(node, interval, lastInterval);
     }
@@ -236,17 +234,17 @@ function createIntervalOnNode(node, interval, lastInterval) {
   // Print interval status in interval if the node is a lane
   if (node.classList.contains('lane') && node.getAttribute('lane-number')) {
     // Create a DOM nodes for the interval status
-    createIntervalStatusNode(intervalNode);
+    createIntervalStatusNode(intervalNode, node);
   }
   // Print lane number in interval if the node is a lane and interval is first
-  if (node.classList.contains('lane') && node.getAttribute('lane-number') && lastInterval === intervals[0] || interval === intervals[intervals.length-1]) {
+  if (node.classList.contains('lane') && node.getAttribute('lane-number') && lastInterval === availableIntervals[0] || interval === availableIntervals[availableIntervals.length-1]) {
     // Create a DOM node for the lane number
     let laneNumber = document.createElement('div');
     // Set the lane number properties
     laneNumber.classList.add('lane-number');
     laneNumber.textContent = node.getAttribute('lane-number');
     // Prepend or append lane number to interval node
-    if (lastInterval === intervals[0]) {
+    if (lastInterval === availableIntervals[0]) {
       intervalNode.prepend(laneNumber);
     } else {
       intervalNode.append(laneNumber);
@@ -256,12 +254,16 @@ function createIntervalOnNode(node, interval, lastInterval) {
   node.appendChild(intervalNode);
 }
 
-function createIntervalStatusNode(intervalNode, status = 1) {
+function createIntervalStatusNode(intervalNode, laneNode) {
   // Step 1) Create DOM nodes for the interval status sections
   // Step 1.1) Create section left
   let intervalSectionLeft = document.createElement('div');
   intervalSectionLeft.classList.add('interval-section-left');
-  intervalSectionLeft.setAttribute('status', 'NONE');
+  let intervalSectionLeftStatus = 'NONE';
+  if (laneNode.getAttribute('lane-number') && lanes[laneNode.getAttribute('lane-number')].intervals[intervalNode.getAttribute('interval')].left) {
+    intervalSectionLeftStatus = lanes[laneNode.getAttribute('lane-number')].intervals[intervalNode.getAttribute('interval')].left;
+  }
+  intervalSectionLeft.setAttribute('status', intervalSectionLeftStatus);
   intervalSectionLeft.addEventListener('click', onIntervalSectionClicked);
   let intervalSectionLeftSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   intervalSectionLeftSVG.setAttribute('width', '44px');
@@ -273,6 +275,11 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   intervalSectionCenter.classList.add('interval-section-center');
   intervalSectionCenter.addEventListener('click', onIntervalSectionClicked);
   intervalSectionCenter.setAttribute('status', 'NONE');
+  let intervalSectionCenterStatus = 'NONE';
+  if (laneNode.getAttribute('lane-number') && lanes[laneNode.getAttribute('lane-number')].intervals[intervalNode.getAttribute('interval')].center) {
+    intervalSectionCenterStatus = lanes[laneNode.getAttribute('lane-number')].intervals[intervalNode.getAttribute('interval')].center;
+  }
+  intervalSectionCenter.setAttribute('status', intervalSectionCenterStatus);
   let intervalSectionCenterSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   intervalSectionCenterSVG.setAttribute('width', '100%');
   intervalSectionCenterSVG.setAttribute('height', '100%');
@@ -283,7 +290,11 @@ function createIntervalStatusNode(intervalNode, status = 1) {
   let intervalSectionRight = document.createElement('div');
   intervalSectionRight.classList.add('interval-section-right');
   intervalSectionRight.addEventListener('click', onIntervalSectionClicked);
-  intervalSectionRight.setAttribute('status', 'NONE');
+  let intervalSectionRightStatus = 'NONE';
+  if (laneNode.getAttribute('lane-number') && lanes[laneNode.getAttribute('lane-number')].intervals[intervalNode.getAttribute('interval')].right) {
+    intervalSectionRightStatus = lanes[laneNode.getAttribute('lane-number')].intervals[intervalNode.getAttribute('interval')].right;
+  }
+  intervalSectionRight.setAttribute('status', intervalSectionRightStatus);
   let intervalSectionRightSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   intervalSectionRightSVG.setAttribute('width', '44px');
   intervalSectionRightSVG.setAttribute('height', '100%');
@@ -427,7 +438,7 @@ function createLane(laneNumber) {
   // Set the lane properties
   laneNode.classList.add('lane');
   laneNode.setAttribute('lane-number', laneNumber);
-  laneNode.setAttribute('lane-type', 'RACE');
+  laneNode.setAttribute('lane-type', lanes[laneNumber].laneType || 'RACE');
   // Set interval nodes in the lane
   createIntervalsOnNode(laneNode);
   // Duplicate lane for starting area
@@ -632,5 +643,5 @@ function saveCurrentTrack(name = 'Baankaart') {
  * @param {String} name - The name of the current track.
  */
 function getTrackById(id) {
-  return fetch(`https://dev-server1.aqualabs.nl/api/tracks/${id}`);
+  return fetch(`http://localhost:3000/api/tracks/${id}`);
 }
